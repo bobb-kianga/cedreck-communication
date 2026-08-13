@@ -1,14 +1,20 @@
-# Cellex Market
+# Receipt Management System
 
-A phone-selling storefront built as a fully static website that can run live on GitHub Pages without Firebase or Supabase.
+A phone transaction receipt management system built as a fully static website that can run live on GitHub Pages without Firebase or Supabase.
 
 ## Features
 
 - User login and registration using browser local storage
-- Phone listings stored in local storage
-- Searchable catalog
-- Add a phone listing form
-- Buy and delete actions
+- Receipt creation and management
+- Receipt tracking with the following information:
+  - Phone IMEI
+  - Customer ID
+  - Customer Names
+  - Next of Kin
+  - Method of Payment (Cash, Credit Card, Debit Card, Mobile Money, Bank Transfer)
+  - Transaction Date
+- Searchable receipt catalog (by customer ID, name, or IMEI)
+- View and delete receipt actions
 - Easy GitHub Pages deployment
 
 ## Run locally
@@ -30,4 +36,4 @@ Then open http://localhost:8000
 
 ## Notes
 
-This is a lightweight live version intended for quick deployment and demo use. It stores data in the browser, so it is ideal for static hosting and testing before adding a real backend.
+This is a lightweight receipt management system intended for transaction tracking and record keeping. It stores data in the browser, so it is ideal for static hosting and testing before adding a real backend.

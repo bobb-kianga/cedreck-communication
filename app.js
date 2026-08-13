@@ -1,42 +1,39 @@
 const STORAGE_KEYS = {
-  users: "cellex_users",
-  currentUser: "cellex_current_user",
-  phones: "cellex_phones"
+  users: "receipt_users",
+  currentUser: "receipt_current_user",
+  receipts: "receipt_data"
 };
 
-const demoPhones = [
+const demoReceipts = [
   {
-    id: "demo-1",
-    brand: "Apple",
-    model: "iPhone 15 Pro",
-    title: "Unlocked iPhone 15 Pro 256GB",
-    price: 899,
-    storage: "256GB",
-    condition: "Excellent",
-    imageUrl: "https://images.unsplash.com/photo-1672235470220-487ca5a4621b?auto=format&fit=crop&w=900&q=80",
-    seller: "demo@cellexmarket.com"
+    id: "receipt-1",
+    customerName: "John Doe",
+    customerId: "CUST-001",
+    imei: "123456789012345",
+    nextOfKin: "Jane Doe",
+    paymentMethod: "Cash",
+    date: "2026-08-10",
+    createdBy: "demo@receiptsystem.com"
   },
   {
-    id: "demo-2",
-    brand: "Samsung",
-    model: "Galaxy S24 Ultra",
-    title: "Samsung Galaxy S24 Ultra 512GB",
-    price: 1049,
-    storage: "512GB",
-    condition: "Brand new",
-    imageUrl: "https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=900&q=80",
-    seller: "demo@cellexmarket.com"
+    id: "receipt-2",
+    customerName: "Sarah Smith",
+    customerId: "CUST-002",
+    imei: "987654321098765",
+    nextOfKin: "Tom Smith",
+    paymentMethod: "Credit Card",
+    date: "2026-08-11",
+    createdBy: "demo@receiptsystem.com"
   },
   {
-    id: "demo-3",
-    brand: "Google",
-    model: "Pixel 8 Pro",
-    title: "Google Pixel 8 Pro 128GB",
-    price: 699,
-    storage: "128GB",
-    condition: "Good",
-    imageUrl: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80",
-    seller: "demo@cellexmarket.com"
+    id: "receipt-3",
+    customerName: "Mike Johnson",
+    customerId: "CUST-003",
+    imei: "456789123456789",
+    nextOfKin: "Emma Johnson",
+    paymentMethod: "Mobile Money",
+    date: "2026-08-12",
+    createdBy: "demo@receiptsystem.com"
   }
 ];
 
@@ -51,25 +48,25 @@ const phoneForm = document.querySelector("#phone-form");
 const phoneList = document.querySelector("#phone-list");
 const searchInput = document.querySelector("#search-input");
 
-let allPhones = getStoredPhones();
+let allReceipts = getStoredReceipts();
 
-function getStoredPhones() {
-  const stored = localStorage.getItem(STORAGE_KEYS.phones);
+function getStoredReceipts() {
+  const stored = localStorage.getItem(STORAGE_KEYS.receipts);
   if (!stored) {
-    localStorage.setItem(STORAGE_KEYS.phones, JSON.stringify(demoPhones));
-    return [...demoPhones];
+    localStorage.setItem(STORAGE_KEYS.receipts, JSON.stringify(demoReceipts));
+    return [...demoReceipts];
   }
 
   try {
     return JSON.parse(stored);
   } catch {
-    localStorage.setItem(STORAGE_KEYS.phones, JSON.stringify(demoPhones));
-    return [...demoPhones];
+    localStorage.setItem(STORAGE_KEYS.receipts, JSON.stringify(demoReceipts));
+    return [...demoReceipts];
   }
 }
 
-function savePhones() {
-  localStorage.setItem(STORAGE_KEYS.phones, JSON.stringify(allPhones));
+function saveReceipts() {
+  localStorage.setItem(STORAGE_KEYS.receipts, JSON.stringify(allReceipts));
 }
 
 function getUsers() {
@@ -118,37 +115,36 @@ function updateAuthUI(user) {
   }
 }
 
-function renderPhones(phones) {
+function renderReceipts(receipts) {
   const searchTerm = searchInput.value.trim().toLowerCase();
-  const filtered = phones.filter((phone) => {
-    const fullText = `${phone.brand} ${phone.model} ${phone.title}`.toLowerCase();
+  const filtered = receipts.filter((receipt) => {
+    const fullText = `${receipt.customerName} ${receipt.customerId} ${receipt.imei}`.toLowerCase();
     return fullText.includes(searchTerm);
   });
 
   if (!filtered.length) {
-    phoneList.innerHTML = '<div class="empty-state">No phones match your search yet.</div>';
+    phoneList.innerHTML = '<div class="empty-state">No receipts found.</div>';
     return;
   }
 
   phoneList.innerHTML = filtered
     .map(
-      (phone) => `
+      (receipt) => `
         <article class="phone-card">
-          <img src="${phone.imageUrl || "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"}" alt="${phone.title}" />
           <div class="card-body">
             <div class="card-top">
-              <span class="card-brand">${phone.brand}</span>
-              <span class="card-price">$${Number(phone.price).toFixed(2)}</span>
+              <span class="card-brand">${receipt.customerId}</span>
+              <span class="card-price">${receipt.paymentMethod}</span>
             </div>
-            <h3>${phone.title}</h3>
-            <p>${phone.model}</p>
+            <h3>${receipt.customerName}</h3>
+            <p>IMEI: ${receipt.imei}</p>
             <div class="meta">
-              <span>${phone.condition}</span>
-              <span>${phone.storage}</span>
+              <span>Next of Kin: ${receipt.nextOfKin}</span>
+              <span>Date: ${receipt.date}</span>
             </div>
             <div class="card-actions">
-              <button class="buy-btn" data-buy-id="${phone.id}">Buy now</button>
-              <button class="delete-btn" data-delete-id="${phone.id}">Delete</button>
+              <button class="buy-btn" data-view-id="${receipt.id}">View</button>
+              <button class="delete-btn" data-delete-id="${receipt.id}">Delete</button>
             </div>
           </div>
         </article>
@@ -204,79 +200,89 @@ function handleLogout() {
   updateAuthUI(null);
 }
 
-function handlePhoneSubmit(event) {
+function handleReceiptSubmit(event) {
   event.preventDefault();
 
   const user = getCurrentUser();
   if (!user) {
-    alert("Please log in before listing a phone.");
+    alert("Please log in before creating a receipt.");
     return;
   }
 
   const formData = new FormData(phoneForm);
-  const phone = {
-    id: `item-${Date.now()}`,
-    brand: String(formData.get("brand") || "").trim(),
-    model: String(formData.get("model") || "").trim(),
-    title: String(formData.get("title") || "").trim(),
-    price: Number(formData.get("price") || 0),
-    storage: String(formData.get("storage") || "").trim(),
-    condition: String(formData.get("condition") || "").trim(),
-    imageUrl: String(formData.get("imageUrl") || "").trim(),
-    seller: user.email
+  const receipt = {
+    id: `receipt-${Date.now()}`,
+    customerName: String(formData.get("customerName") || "").trim(),
+    customerId: String(formData.get("customerId") || "").trim(),
+    imei: String(formData.get("imei") || "").trim(),
+    nextOfKin: String(formData.get("nextOfKin") || "").trim(),
+    paymentMethod: String(formData.get("paymentMethod") || "").trim(),
+    date: String(formData.get("date") || "").trim(),
+    createdBy: user.email
   };
 
-  if (!phone.brand || !phone.model || !phone.title || phone.price <= 0) {
-    alert("Please complete all required phone details before saving.");
+  if (!receipt.customerName || !receipt.customerId || !receipt.imei || !receipt.nextOfKin || !receipt.paymentMethod || !receipt.date) {
+    alert("Please complete all required fields.");
     return;
   }
 
-  allPhones = [phone, ...allPhones];
-  savePhones();
-  renderPhones(allPhones);
+  allReceipts = [receipt, ...allReceipts];
+  saveReceipts();
+  renderReceipts(allReceipts);
   phoneForm.reset();
+  alert("Receipt created successfully!");
 }
 
-function handleBuy(phoneId) {
-  const phone = allPhones.find((item) => item.id === phoneId);
-  if (!phone) return;
+function handleViewReceipt(receiptId) {
+  const receipt = allReceipts.find((item) => item.id === receiptId);
+  if (!receipt) return;
 
-  alert(`Order placed for ${phone.title}. A sales agent will contact you soon.`);
+  const details = `
+Receipt ID: ${receipt.id}
+Customer: ${receipt.customerName}
+Customer ID: ${receipt.customerId}
+IMEI: ${receipt.imei}
+Next of Kin: ${receipt.nextOfKin}
+Payment Method: ${receipt.paymentMethod}
+Date: ${receipt.date}
+Created By: ${receipt.createdBy}
+  `;
+  alert(details);
 }
 
-function handleDelete(phoneId) {
+function handleDeleteReceipt(receiptId) {
   const user = getCurrentUser();
   if (!user) {
-    alert("Please sign in to remove listings.");
+    alert("Please sign in to delete receipts.");
     return;
   }
 
-  const confirmed = window.confirm("Delete this phone listing?");
+  const confirmed = window.confirm("Delete this receipt?");
   if (!confirmed) return;
 
-  allPhones = allPhones.filter((item) => item.id !== phoneId);
-  savePhones();
-  renderPhones(allPhones);
+  allReceipts = allReceipts.filter((item) => item.id !== receiptId);
+  saveReceipts();
+  renderReceipts(allReceipts);
 }
 
 authForm.addEventListener("submit", handleLogin);
 registerBtn.addEventListener("click", handleRegister);
 logoutBtn.addEventListener("click", handleLogout);
-phoneForm.addEventListener("submit", handlePhoneSubmit);
-searchInput.addEventListener("input", () => renderPhones(allPhones));
+phoneForm.addEventListener("submit", handleReceiptSubmit);
+searchInput.addEventListener("input", () => renderReceipts(allReceipts));
 
 document.addEventListener("click", (event) => {
-  const buyButton = event.target.closest("[data-buy-id]");
+  const viewButton = event.target.closest("[data-view-id]");
   const deleteButton = event.target.closest("[data-delete-id]");
 
-  if (buyButton) {
-    handleBuy(buyButton.dataset.buyId);
+  if (viewButton) {
+    handleViewReceipt(viewButton.dataset.viewId);
   }
 
   if (deleteButton) {
-    handleDelete(deleteButton.dataset.deleteId);
+    handleDeleteReceipt(deleteButton.dataset.deleteId);
   }
 });
 
 updateAuthUI(getCurrentUser());
-renderPhones(allPhones);
+renderReceipts(allReceipts);

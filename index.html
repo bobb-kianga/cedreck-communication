@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cellex Market</title>
+    <title>Receipt Management System</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="topbar">
       <div class="brand-block">
-        <div class="brand">Cellex Market</div>
-        <span class="tagline">Smart phones. Honest deals.</span>
+        <div class="brand">Receipt System</div>
+        <span class="tagline">Phone Transaction Records</span>
       </div>
 
       <form id="auth-form" class="auth-form">
@@ -25,73 +25,67 @@
     <main class="page">
       <section class="hero panel">
         <div>
-          <p class="eyebrow">Inventory</p>
-          <h1>Phones ready to sell</h1>
+          <p class="eyebrow">Transactions</p>
+          <h1>Receipt Management</h1>
         </div>
         <label class="search-wrap">
           <span>Search</span>
-          <input id="search-input" type="search" placeholder="Search by brand or model" />
+          <input id="search-input" type="search" placeholder="Search by customer ID or name" />
         </label>
       </section>
 
       <section class="content-grid">
         <aside class="panel form-panel">
           <div class="panel-header">
-            <h2>Sell a phone</h2>
+            <h2>Create Receipt</h2>
             <span class="status-badge" id="auth-status">Logged out</span>
           </div>
 
           <form id="phone-form" class="phone-form">
-            <div class="field-row">
-              <label>
-                Brand
-                <input name="brand" type="text" placeholder="Apple" required />
-              </label>
-              <label>
-                Model
-                <input name="model" type="text" placeholder="iPhone 15 Pro" required />
-              </label>
-            </div>
-
             <label>
-              Title
-              <input name="title" type="text" placeholder="Unlocked iPhone 15 Pro" required />
+              Customer Names
+              <input name="customerName" type="text" placeholder="John Doe" required />
             </label>
 
-            <div class="field-row">
-              <label>
-                Price ($)
-                <input name="price" type="number" min="1" step="0.01" placeholder="899" required />
-              </label>
-              <label>
-                Storage
-                <input name="storage" type="text" placeholder="256GB" required />
-              </label>
-            </div>
+            <label>
+              Customer ID
+              <input name="customerId" type="text" placeholder="CUST-001" required />
+            </label>
 
-            <div class="field-row">
-              <label>
-                Condition
-                <select name="condition">
-                  <option>Brand new</option>
-                  <option>Excellent</option>
-                  <option>Good</option>
-                  <option>Fair</option>
-                </select>
-              </label>
-              <label>
-                Image URL
-                <input name="imageUrl" type="url" placeholder="https://example.com/phone.jpg" />
-              </label>
-            </div>
+            <label>
+              Phone IMEI
+              <input name="imei" type="text" placeholder="123456789012345" required />
+            </label>
 
-            <button type="submit" class="primary-btn">List phone</button>
+            <label>
+              Next of Kin
+              <input name="nextOfKin" type="text" placeholder="Jane Doe" required />
+            </label>
+
+            <label>
+              Method of Payment
+              <select name="paymentMethod" required>
+                <option value="">Select payment method</option>
+                <option>Cash</option>
+                <option>Credit Card</option>
+                <option>Debit Card</option>
+                <option>Mobile Money</option>
+                <option>Bank Transfer</option>
+              </select>
+            </label>
+
+            <label>
+              Date
+              <input name="date" type="date" required />
+            </label>
+
+            <button type="submit" class="primary-btn">Generate Receipt</button>
           </form>
         </aside>
 
         <section class="panel listing-panel">
           <div class="panel-header">
-            <h2>Available phones</h2>
+            <h2>Receipt List</h2>
           </div>
           <div id="phone-list" class="phone-grid"></div>
         </section>
