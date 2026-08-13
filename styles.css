@@ -208,6 +208,21 @@ button:disabled {
   font-weight: 700;
 }
 
+.secondary:hover {
+  background: #d4e3ff;
+}
+
+.quick-login-btn {
+  background: #10b981;
+  color: white;
+  padding: 0.8rem 1rem;
+  font-weight: 600;
+}
+
+.quick-login-btn:hover {
+  background: #059669;
+}
+
 .ghost {
   background: #f1f4f8;
   color: var(--text);

@@ -32,6 +32,7 @@ const emailInput = document.querySelector("#email");
 const passwordInput = document.querySelector("#password");
 const loginBtn = document.querySelector("#login-btn");
 const registerBtn = document.querySelector("#register-btn");
+const quickLoginBtn = document.querySelector("#quick-login-btn");
 const logoutBtn = document.querySelector("#logout-btn");
 const authStatus = document.querySelector("#auth-status");
 const phoneForm = document.querySelector("#phone-form");
@@ -109,6 +110,17 @@ async function handleLogin(event) {
     // Auth state listener will handle UI update
   } catch (error) {
     alert("Login failed: " + error.message);
+  }
+}
+
+async function handleQuickLogin(event) {
+  event.preventDefault();
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
+    authForm.reset();
+    // Auth state listener will handle UI update
+  } catch (error) {
+    alert("Quick login failed: " + error.message);
   }
 }
 
@@ -305,6 +317,7 @@ function switchToUserView() {
 // Event Listeners
 authForm.addEventListener("submit", handleLogin);
 registerBtn.addEventListener("click", handleRegister);
+quickLoginBtn.addEventListener("click", handleQuickLogin);
 logoutBtn.addEventListener("click", handleLogout);
 phoneForm.addEventListener("submit", handleReceiptSubmit);
 searchInput.addEventListener("input", () => renderReceipts());
