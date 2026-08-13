@@ -35,10 +35,13 @@
       </section>
 
       <section class="content-grid">
-        <aside class="panel form-panel">
+        <aside class="panel form-panel" id="user-form-section">
           <div class="panel-header">
             <h2>Create Receipt</h2>
-            <span class="status-badge" id="auth-status">Logged out</span>
+            <div class="header-actions">
+              <span class="status-badge" id="auth-status">Logged out</span>
+              <button id="admin-view-btn" type="button" class="view-toggle-btn hidden">View All Receipts</button>
+            </div>
           </div>
 
           <form id="phone-form" class="phone-form">
@@ -83,11 +86,19 @@
           </form>
         </aside>
 
-        <section class="panel listing-panel">
+        <section class="panel listing-panel" id="admin-view-section" style="display: none;">
+          <div class="panel-header">
+            <h2>All Receipts (Admin View)</h2>
+            <button id="user-view-btn" type="button" class="view-toggle-btn">Back to My Receipts</button>
+          </div>
+          <div id="phone-list" class="phone-grid"></div>
+        </section>
+
+        <section class="panel listing-panel" id="user-listing-panel">
           <div class="panel-header">
             <h2>Receipt List</h2>
           </div>
-          <div id="phone-list" class="phone-grid"></div>
+          <div id="phone-list-user" class="phone-grid"></div>
         </section>
       </section>
     </main>

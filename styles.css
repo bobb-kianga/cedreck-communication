@@ -314,6 +314,33 @@ button:disabled {
   color: var(--muted);
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.view-toggle-btn {
+  background: var(--primary);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.view-toggle-btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.view-toggle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 860px) {
   .topbar,
   .hero,

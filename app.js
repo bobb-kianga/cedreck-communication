@@ -4,6 +4,12 @@ const STORAGE_KEYS = {
   receipts: "receipt_data"
 };
 
+const DEMO_ADMIN = {
+  email: "admin@receiptsystem.com",
+  password: "admin123",
+  isAdmin: true
+};
+
 const demoReceipts = [
   {
     id: "receipt-1",
@@ -45,8 +51,16 @@ const registerBtn = document.querySelector("#register-btn");
 const logoutBtn = document.querySelector("#logout-btn");
 const authStatus = document.querySelector("#auth-status");
 const phoneForm = document.querySelector("#phone-form");
-const phoneList = document.querySelector("#phone-list");
 const searchInput = document.querySelector("#search-input");
+
+// Helper to get the active phone-list
+function getActivePhoneList() {
+  const userFormSection = document.querySelector("#user-form-section");
+  if (userFormSection && !userFormSection.classList.contains("hidden")) {
+    return document.querySelector("#phone-list-user");
+  }
+  return document.querySelector("#phone-list");
+}
 
 let allReceipts = getStoredReceipts();
 
@@ -71,7 +85,16 @@ function saveReceipts() {
 
 function getUsers() {
   const stored = localStorage.getItem(STORAGE_KEYS.users);
-  return stored ? JSON.parse(stored) : [];
+  let users = stored ? JSON.parse(stored) : [];
+  
+  // Ensure demo admin exists
+  const adminExists = users.some(u => u.email === DEMO_ADMIN.email);
+  if (!adminExists) {
+    users = [DEMO_ADMIN, ...users];
+    saveUsers(users);
+  }
+  
+  return users;
 }
 
 function saveUsers(users) {
@@ -108,8 +131,17 @@ function updateAuthUI(user) {
   const submitButton = phoneForm.querySelector('button[type="submit"]');
   submitButton.disabled = !signedIn;
 
+  const adminViewBtn = document.querySelector("#admin-view-btn");
+  const userViewBtn = document.querySelector("#user-view-btn");
+  if (adminViewBtn && userViewBtn) {
+    const isAdmin = user && user.isAdmin;
+    adminViewBtn.classList.toggle("hidden", !isAdmin);
+    userViewBtn.classList.toggle("hidden", isAdmin);
+  }
+
   if (signedIn) {
-    setAuthStatus(`Logged in as ${user.email}`);
+    const adminLabel = user.isAdmin ? " (Admin)" : "";
+    setAuthStatus(`Logged in as ${user.email}${adminLabel}`);
   } else {
     setAuthStatus("Logged out");
   }
@@ -117,17 +149,26 @@ function updateAuthUI(user) {
 
 function renderReceipts(receipts) {
   const searchTerm = searchInput.value.trim().toLowerCase();
-  const filtered = receipts.filter((receipt) => {
+  const user = getCurrentUser();
+  const phoneList = getActivePhoneList();
+  
+  if (!phoneList) return;
+  
+  // Filter by user role
+  let filteredReceipts = filterReceiptsByView(receipts);
+  
+  // Filter by search term
+  filteredReceipts = filteredReceipts.filter((receipt) => {
     const fullText = `${receipt.customerName} ${receipt.customerId} ${receipt.imei}`.toLowerCase();
     return fullText.includes(searchTerm);
   });
 
-  if (!filtered.length) {
+  if (!filteredReceipts.length) {
     phoneList.innerHTML = '<div class="empty-state">No receipts found.</div>';
     return;
   }
 
-  phoneList.innerHTML = filtered
+  phoneList.innerHTML = filteredReceipts
     .map(
       (receipt) => `
         <article class="phone-card">
@@ -141,6 +182,7 @@ function renderReceipts(receipts) {
             <div class="meta">
               <span>Next of Kin: ${receipt.nextOfKin}</span>
               <span>Date: ${receipt.date}</span>
+              ${user && user.isAdmin ? `<span>Created by: ${receipt.createdBy}</span>` : ''}
             </div>
             <div class="card-actions">
               <button class="buy-btn" data-view-id="${receipt.id}">View</button>
@@ -166,7 +208,7 @@ function handleLogin(event) {
     return;
   }
 
-  setCurrentUser({ email: user.email });
+  setCurrentUser({ email: user.email, isAdmin: user.isAdmin || false });
   authForm.reset();
   updateAuthUI(getCurrentUser());
 }
@@ -188,9 +230,9 @@ function handleRegister() {
     return;
   }
 
-  const updatedUsers = [...users, { email, password }];
+  const updatedUsers = [...users, { email, password, isAdmin: false }];
   saveUsers(updatedUsers);
-  setCurrentUser({ email });
+  setCurrentUser({ email, isAdmin: false });
   authForm.reset();
   updateAuthUI(getCurrentUser());
 }
@@ -265,6 +307,27 @@ function handleDeleteReceipt(receiptId) {
   renderReceipts(allReceipts);
 }
 
+function filterReceiptsByView(receipts) {
+  const user = getCurrentUser();
+  if (!user) return [];
+  if (user.isAdmin) return receipts;
+  return receipts.filter((r) => r.createdBy === user.email);
+}
+
+function switchToAdminView() {
+  document.querySelector("#user-form-section").classList.add("hidden");
+  document.querySelector("#user-listing-panel").classList.add("hidden");
+  document.querySelector("#admin-view-section").classList.remove("hidden");
+  renderReceipts(allReceipts);
+}
+
+function switchToUserView() {
+  document.querySelector("#user-form-section").classList.remove("hidden");
+  document.querySelector("#user-listing-panel").classList.remove("hidden");
+  document.querySelector("#admin-view-section").classList.add("hidden");
+  renderReceipts(allReceipts);
+}
+
 authForm.addEventListener("submit", handleLogin);
 registerBtn.addEventListener("click", handleRegister);
 logoutBtn.addEventListener("click", handleLogout);
@@ -274,6 +337,8 @@ searchInput.addEventListener("input", () => renderReceipts(allReceipts));
 document.addEventListener("click", (event) => {
   const viewButton = event.target.closest("[data-view-id]");
   const deleteButton = event.target.closest("[data-delete-id]");
+  const adminViewBtn = event.target.closest("[data-admin-view]");
+  const userViewBtn = event.target.closest("[data-user-view]");
 
   if (viewButton) {
     handleViewReceipt(viewButton.dataset.viewId);
@@ -281,6 +346,14 @@ document.addEventListener("click", (event) => {
 
   if (deleteButton) {
     handleDeleteReceipt(deleteButton.dataset.deleteId);
+  }
+
+  if (adminViewBtn) {
+    switchToAdminView();
+  }
+
+  if (userViewBtn) {
+    switchToUserView();
   }
 });
 
