@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cellex Market</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand">Cellex Market</div>
+        <span class="tagline">Smart phones. Honest deals.</span>
+      </div>
+
+      <form id="auth-form" class="auth-form">
+        <input id="email" type="email" placeholder="Email" required />
+        <input id="password" type="password" placeholder="Password" required />
+        <button id="login-btn" type="submit">Login</button>
+        <button id="register-btn" type="button" class="secondary">Register</button>
+        <button id="logout-btn" type="button" class="ghost hidden">Logout</button>
+      </form>
+    </header>
+
+    <main class="page">
+      <section class="hero panel">
+        <div>
+          <p class="eyebrow">Inventory</p>
+          <h1>Phones ready to sell</h1>
+        </div>
+        <label class="search-wrap">
+          <span>Search</span>
+          <input id="search-input" type="search" placeholder="Search by brand or model" />
+        </label>
+      </section>
+
+      <section class="content-grid">
+        <aside class="panel form-panel">
+          <div class="panel-header">
+            <h2>Sell a phone</h2>
+            <span class="status-badge" id="auth-status">Logged out</span>
+          </div>
+
+          <form id="phone-form" class="phone-form">
+            <div class="field-row">
+              <label>
+                Brand
+                <input name="brand" type="text" placeholder="Apple" required />
+              </label>
+              <label>
+                Model
+                <input name="model" type="text" placeholder="iPhone 15 Pro" required />
+              </label>
+            </div>
+
+            <label>
+              Title
+              <input name="title" type="text" placeholder="Unlocked iPhone 15 Pro" required />
+            </label>
+
+            <div class="field-row">
+              <label>
+                Price ($)
+                <input name="price" type="number" min="1" step="0.01" placeholder="899" required />
+              </label>
+              <label>
+                Storage
+                <input name="storage" type="text" placeholder="256GB" required />
+              </label>
+            </div>
+
+            <div class="field-row">
+              <label>
+                Condition
+                <select name="condition">
+                  <option>Brand new</option>
+                  <option>Excellent</option>
+                  <option>Good</option>
+                  <option>Fair</option>
+                </select>
+              </label>
+              <label>
+                Image URL
+                <input name="imageUrl" type="url" placeholder="https://example.com/phone.jpg" />
+              </label>
+            </div>
+
+            <button type="submit" class="primary-btn">List phone</button>
+          </form>
+        </aside>
+
+        <section class="panel listing-panel">
+          <div class="panel-header">
+            <h2>Available phones</h2>
+          </div>
+          <div id="phone-list" class="phone-grid"></div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
